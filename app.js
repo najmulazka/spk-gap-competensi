@@ -49,6 +49,11 @@ app.post('/upload', (req, res) => {
       kolomSikapKerjaCF3,
       kolomPerilakuCF1,
       kolomPerilakuCF2,
+      prosentaseCF,
+      prosentaseSF,
+      prosentaseKapasitasIntelektual,
+      prosentaseSikapKerja,
+      prosentasePerilaku,
     } = req.body;
     // Tangani error dari multer
     if (err) {
@@ -267,14 +272,66 @@ app.post('/upload', (req, res) => {
         };
       });
 
+      let nilaiTotalKapasitasIntelektual = CFSFKapasitasIntelektual.map((item) => {
+        return {
+          Id_Karyawan: item.Id_Karyawan,
+          nilaiTotal: (Number(prosentaseCF) * item.coreFactor) / 100 + (Number(prosentaseSF) * item.secondFactor) / 100,
+        };
+      });
+
+      let nilaiTotalSikapKerja = CFSFSikapKerja.map((item) => {
+        return {
+          Id_Karyawan: item.Id_Karyawan,
+          nilaiTotal: (Number(prosentaseCF) * item.coreFactor) / 100 + (Number(prosentaseSF) * item.secondFactor) / 100,
+        };
+      });
+
+      let nilaiTotalPerilaku = CFSFPerilaku.map((item) => {
+        return {
+          Id_Karyawan: item.Id_Karyawan,
+          nilaiTotal: (Number(prosentaseCF) * item.coreFactor) / 100 + (Number(prosentaseSF) * item.secondFactor) / 100,
+        };
+      });
+
+      let hasilAkhirKapasitasIntelektual = nilaiTotalKapasitasIntelektual.map((item) => {
+        return {
+          Id_Karyawan: item.Id_Karyawan,
+          hasilAkhir: (prosentaseKapasitasIntelektual * item.nilaiTotal) / 100,
+        };
+      });
+
+      let hasilAkhirSikapKerja = nilaiTotalSikapKerja.map((item) => {
+        return {
+          Id_Karyawan: item.Id_Karyawan,
+          hasilAkhir: (prosentaseSikapKerja * item.nilaiTotal) / 100,
+        };
+      });
+
+      let hasilAkhirPerilaku = nilaiTotalPerilaku.map((item) => {
+        return {
+          Id_Karyawan: item.Id_Karyawan,
+          hasilAkhir: (prosentasePerilaku * item.nilaiTotal) / 100,
+        };
+      });
+
+      const hasilAkhir = hasilAkhirKapasitasIntelektual.map((kapasitasIntelektual) => {
+        const sikap = hasilAkhirSikapKerja.find((item) => item.Id_Karyawan === kapasitasIntelektual.Id_Karyawan);
+        const perilaku = hasilAkhirPerilaku.find((item) => item.Id_Karyawan === kapasitasIntelektual.Id_Karyawan);
+
+        const totalHasilAkhir = kapasitasIntelektual.hasilAkhir + sikap.hasilAkhir + perilaku.hasilAkhir;
+
+        return {
+          Id_Karyawan: kapasitasIntelektual.Id_Karyawan,
+          totalHasilAkhir,
+        };
+      });
+
+      const ranking = hasilAkhir.sort((a, b) => b.totalHasilAkhir - a.totalHasilAkhir);
+
       res.status(200).json({
         status: true,
         message: 'File processed successfully',
-        data: {
-          CFSFKapasitasIntelektual,
-          CFSFSikapKerja,
-          CFSFPerilaku,
-        },
+        data: ranking,
       });
     } catch (err) {
       res.status(500).json({
