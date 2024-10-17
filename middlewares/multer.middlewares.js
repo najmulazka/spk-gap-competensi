@@ -1,10 +1,9 @@
 const multer = require('multer');
 const path = require('path');
 
-// Konfigurasi penyimpanan file
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Folder tempat file akan disimpan
+    cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -12,28 +11,25 @@ const storage = multer.diskStorage({
   },
 });
 
-// Validasi tipe file yang diperbolehkan
+// Validasi file
 const fileFilter = (req, file, cb) => {
-  // Ekstensi yang diizinkan
-  const filetypes = /xlsx|csv/; // Hanya izinkan .xlsx dan .csv
+  const filetypes = /xlsx|csv/;
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
 
   // MIME type yang sesuai
   const mimetypes = /vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv/;
   const mimetype = mimetypes.test(file.mimetype);
 
-  // Jika ekstensi dan mimetype sesuai, izinkan upload
   if (extname && mimetype) {
     return cb(null, true);
   } else {
-    cb(new Error('File type not allowed')); // Error jika tipe file tidak diizinkan
+    cb(new Error('File type not allowed'));
   }
 };
 
-// Konfigurasi multer
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // Batas ukuran file 10 MB
+  limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: fileFilter,
 });
 
