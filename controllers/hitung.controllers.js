@@ -187,7 +187,7 @@ module.exports = {
           return {
             Id_Karyawan: item.Id_Karyawan,
             bobotEP: calculationBobot(item.gapEP),
-            bobotKT: calculationBobot(item.gapKTJ),
+            bobotKTJ: calculationBobot(item.gapKTJ),
             bobotKH: calculationBobot(item.gapKH),
             bobotPP: calculationBobot(item.gapPP),
             bobotDB: calculationBobot(item.gapDB),
