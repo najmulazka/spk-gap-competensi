@@ -67,7 +67,7 @@ module.exports = {
         const sheetPerilaku = workbook.Sheets[perilaku];
         const dataKapasitasIntelektual = xlsx.utils.sheet_to_json(sheetKapasitasIntelektual); // Convert ke JSON
         const dataSikapKerja = xlsx.utils.sheet_to_json(sheetSikapKerja);
-        const dataPerilaku = xlsx.utils.sheet_to_json(sheetPerilaku); 
+        const dataPerilaku = xlsx.utils.sheet_to_json(sheetPerilaku);
 
         let gapKapasitasIntelektual = dataKapasitasIntelektual.map((item) => {
           let Id_Karyawan = item.Id_Karyawan;
@@ -310,7 +310,7 @@ module.exports = {
 
           return {
             Id_Karyawan: kapasitasIntelektual.Id_Karyawan,
-            totalHasilAkhir,
+            totalHasilAkhir: totalHasilAkhir.toFixed(2),
           };
         });
 
