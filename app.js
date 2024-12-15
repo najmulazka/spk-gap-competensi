@@ -1,11 +1,20 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
+const cors = require('cors');
 const PORT = 3000;
 const { hitung } = require('./controllers/hitung.controllers');
 
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(cors({
+  origin: '*'
+}));
+
+//app.use((req, res, next) => {
+//  res.header('Access-Control-Allow-Origin', '*');
+//  next();
+//});
 
 // Router index
 app.get('/', (req, res) => {
